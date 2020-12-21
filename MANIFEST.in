@@ -1,0 +1,7 @@
+
+recursive-include tests *.py
+exclude .envrc
+exclude shell.nix
+recursive-exclude nix *
+recursive-exclude notebooks *
+recursive-exclude requirements *.in

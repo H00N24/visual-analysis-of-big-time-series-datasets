@@ -1,0 +1,16 @@
+pip-tools
+black
+nb-black
+flake8
+mypy
+isort
+
+pandas
+umap-learn
+lttb
+
+ipykernel
+jupyter
+
+bokeh
+matplotlib
