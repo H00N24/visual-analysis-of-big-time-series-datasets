@@ -8,3 +8,12 @@ pip install -r requirements.txt -r requirements-dev.txt
 make cython-fastdtw
 pip install -e .
 ```
+
+```
+python -m ipykernel install --user --name masters-thesis --display-name "Master's Thesis"
+```
+
+```
+nbdime extensions --enable --sys-prefix
+nbdime config-git --enable
+```

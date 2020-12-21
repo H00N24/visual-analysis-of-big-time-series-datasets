@@ -11,6 +11,8 @@ lttb
 
 ipykernel
 jupyter
+nbdime
 
 bokeh
+datashader
 matplotlib
