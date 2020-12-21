@@ -1,0 +1,3 @@
+[submodule "libs/fastdtw"]
+	path = libs/fastdtw
+	url = git@github.com:slaypni/fastdtw.git
