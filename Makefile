@@ -31,4 +31,9 @@ requirements:
 	pip-compile $(PIP_COMPILE_FLAGS) -o requirements.txt setup.py
 	pip-compile $(PIP_COMPILE_FLAGS) -o requirements-dev.txt requirements-dev.in
 
-.PHONY: default fmt check black black-check flake8 mypy requirements
+cython-fastdtw:
+	cd libs/fastdtw && \
+	python setup.py build && \
+	python setup.py install
+
+.PHONY: default fmt check black black-check flake8 mypy requirements cython-fastdtw
