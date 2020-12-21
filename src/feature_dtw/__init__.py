@@ -1,20 +1,13 @@
-import logging
-from importlib.metadata import distribution
+try:
+    from importlib.metadata import distribution  # type: ignore
+except ImportError:
+    from importlib_metadata import distribution
+
+from .fdtw import FeatureDTWTransformer, fastdtw_distance
 
 _distribution = distribution("feature_dtw")
 
 __version__ = _distribution.version
 
-logger = logging.getLogger(__name__)
 
-
-def say_hello(name: str = "world") -> None:
-    """
-    Print a greeting.
-
-    >>> say_hello()
-    Hello, world!
-    """
-
-    logging.debug("Saying 'Hello %s!'", name)
-    print(f"Hello, {name}!")
+__all__ = ["FeatureDTWTransformer", "fastdtw_distance"]
