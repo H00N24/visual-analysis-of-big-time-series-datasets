@@ -1,6 +1,7 @@
 .version
 .vscode
 /data
+/UCRArchive_2018
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

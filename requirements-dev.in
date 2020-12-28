@@ -11,7 +11,9 @@ lttb
 
 ipykernel
 jupyter
+jupyterlab
 nbdime
+tqdm
 
 bokeh
 datashader

@@ -16,4 +16,5 @@ python -m ipykernel install --user --name masters-thesis --display-name "Master'
 ```
 nbdime extensions --enable --sys-prefix
 nbdime config-git --enable
+jupyter labextension install @jupyter-widgets/jupyterlab-manager
 ```

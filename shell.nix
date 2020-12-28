@@ -6,6 +6,8 @@ mkShell {
   name = "vaobtsd-env";
   buildInputs = [
     python36
+    gcc
+    nodejs
     glibcLocales
   ];
   shellHook = ''
