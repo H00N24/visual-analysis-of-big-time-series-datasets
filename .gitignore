@@ -1,5 +1,6 @@
 .version
 .vscode
+.direnv
 /data
 /UCRArchive_2018
 /power_consumption_data
