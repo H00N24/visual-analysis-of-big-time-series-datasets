@@ -1,14 +1,9 @@
 from typing import Any, Callable, List, Optional, Union
 
 import numpy as np
-from fastdtw import fastdtw
 from sklearn.base import TransformerMixin
 from sklearn.metrics import pairwise_distances
 from sklearn.utils import check_array, check_random_state
-
-
-def fastdtw_distance(x: Any, y: Any, **kwargs: Any) -> float:
-    return fastdtw(x[~np.isnan(x)], y[~np.isnan(y)])[0]
 
 
 class FeatureDTWTransformer(TransformerMixin):
