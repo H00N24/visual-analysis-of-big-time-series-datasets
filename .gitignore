@@ -2,6 +2,7 @@
 .vscode
 /data
 /UCRArchive_2018
+/power_consumption_data
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

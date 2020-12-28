@@ -6,7 +6,10 @@ mypy
 isort
 
 pandas
-umap-learn
+umap-learn==0.5.0rc1
+hdbscan
+fbprophet
+holidays
 lttb
 
 ipykernel

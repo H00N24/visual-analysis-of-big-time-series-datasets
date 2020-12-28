@@ -7,7 +7,7 @@ mkShell {
   buildInputs = [
     python36
     gcc
-    nodejs
+    nodejs-12_x
     glibcLocales
   ];
   shellHook = ''
