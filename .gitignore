@@ -4,6 +4,7 @@
 /data
 /UCRArchive_2018
 /power_consumption_data
+.DS_store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

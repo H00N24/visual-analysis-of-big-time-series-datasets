@@ -1,0 +1,136 @@
+\chapter{Time Series Data Mining For Visual Analysis}
+Even though most of the data around us have a temporal nature, we often transform them into spatial data by either fixing time or ignoring time completely. It is not because the time aspect is not essential, though it makes all tasks significantly more challenging as it increases the number of data points and adding relations between them.  For example, it is straightforward to compare temperatures in two places at a fixed time. However, once we want to compare their temperature profiles throughout the year, we cannot omit the temporal aspect of the data. Because the temporal aspect adds relations between points and increases the dimensionality of the data, the analysis becomes significantly more difficult. This effect is multiplied once we work with a dataset of time series \cite{met:vis-data-help}. Mostly there, we see an opportunity where visual exploration could help.
+
+This chapter will will discuss the right choices for measuring the distance between time series and examine how to effectively apply them in the subsequent visual analysis. However, before we dive into the chapter, we will clarify the basic terminology.
+
+Having a set of objects $X$ we define the \textit{distance function} as:
+\begin{equation}
+    d: X \times X \rightarrow R^{+}_0 
+\end{equation}
+The resulting non-negative real value is called a \textit{distance} or \textit{dissimilarity}. We call a distance function a metric if and only if it satisfies the following three axioms:
+\begin{enumerate}
+    \item $\forall x, y \in X: d(x, y) = 0 \Leftrightarrow x = y $ (identity of indiscernibles)
+    \item $\forall x, y \in X: d(x, y) = d(y, x)$ (symmetry)
+    \item $\forall x, y, z \in X: d(x, y) + d(y, z) \ge d(x, z)$ (triangle inequality)
+\end{enumerate}
+A \textit{semi-metric} is a distance function that satisfies the first two axioms, but it does not guarantee the triangle inequality.
+\textit{A time series} is then defined as a sequence of data points ($X_t$) indexed by time ($t$).
+
+\section{Distance Measures for Time Series}
+In a typical scenario, a distance metric computes the distance for one specific data type (categorical, spatial, numerical). However, time series are a combination of multiple data types as each point has an order in time, and we have to take it into account when computing the distance.
+
+To the best of our knowledge, there are over 30 used distance measures for time series today. As there is no "universally best" metric \cite{met:universal}, we will go through the types of distance measures used for time series from simple and universal to more advanced and domain-specific. For a distance function categorization, we are following the one proposed by Esling and Agon \cite{met:classification}.
+
+\subsection{Shape-Based Distance Measures}
+Shape-based distance measures compare the overall shape of the time series \cite{met:classification}. They are the closest derivation of commonly used distance measures adjusted for the time series data, making them easy to implement and understand. Regardless of their simple nature, they generally yield very competitive results and are considered a gold standard of time series distance measures \cite{met:comparison-new, met:dtw-best-0, met:dtw-best-1, met:universal, met:fDTW}.
+
+\subsubsection{Euclidian Distance and Other $L_p$ Norms}
+The most basic and widely used distance measures for spatial and temporal data are Euclidian distance (ED) and other $L_p$ norms \cite{met:lp-norm, met:lp-norm-usage}.
+
+A distance measure on a set of objects $X$ is a function $d:X\times~X\rightarrow[0; \infty)$.
+Given the two time series $X$ and $Y$, where $X=(x_1; x_2; ...; x_n)$ and $Y=(y_1; y_2;...; y_m)$, we define $L_p$ norms as listed in Table~\ref{tab:lp-norms}.
+\begin{table}[!htbp]
+\begin{tabular}{ll}
+\textbf{Norm}          & \textbf{Definition}                               \\ \hline
+$L_1$ - Manhattan      & $\sum^{n}_{i=1}|x_i - y_i|$                       \\
+$L_2$ - Euclidian      & $\sqrt{\sum^{n}_{i=1}(x_i - y_i)^2}$              \\
+$L_p$ - Minkowski      & $\sqrt[p]{\sum^{n}_{i=1}(x_i - y_i)^\frac{1}{p}}$ \\
+$L_\infty$ - Infinite  & $\max_{i=1..n}|x_i - y_i|$
+\end{tabular}
+\caption{$L_p$ norms for time series}
+\label{tab:lp-norms}
+\end{table}
+
+Although the $L_p$ norms perform well, especially on larger datasets \cite{met:universal, met:comparison-new, met:met-comparison}, they require time series of equal length and tend to be fragile to the noise, shifts, and different speeds in time series \cite{met:classification}.
+
+\subsubsection{Dynamic Time Warping}
+An elegant solution to the above-mentioned limitations of the $L_p$ norms are elastic measures, especially the Dynamic Time Warping (DTW) \cite{met:dtw}. DTW is a method to compute a distance between a pair of time series. When computing DTW distance between time series $X$ and $Y$, it finds the best alignment between them as a minimal cost warping path ($W=w_1 ,...,w_k ,...,w_K$) in $m \times n$ matrix. Elements of the matrix represent the cost to align two corresponding points ($(x_i - y_j)^2$). The warping path starts in the bottom-left corner and ends in the upper-right one (Fig. \ref{fig:dtw_warping}). It is formally defined as:
+\begin{equation}
+    DTW(X; Y) = \argmin_{W=w_1 ,...,w_k ,...,w_K} \sqrt{ \sum^{K}_{k=1; w_k=(i; j)} (x_i - y_j)^2}
+\end{equation}
+
+When comparing DTW with the Euclidian distance, DTW finds the best possible alignment between time series (Fig. \ref{fig:Euclid_vs_DTW}). That allows us to reasonably compare time series that could have different lengths, speeds, and shift \cite{met:dtw, met:dtw-window}.
+
+Dynamic time warping is considered one of the best distance measures for time series and regularly outperforms other more sophisticated approaches \cite{met:universal, met:comparison-new, met:dtw-best-1, met:dtw-best-0}, but its use comes with two main concerns:
+\begin{enumerate}
+    \item In practice, DTW is solved by dynamic programming with $O(n^2)$ time complexity.
+    \item DTW is a semi-metric -- it does not guarantee triangle inequality, limiting the number of optimization techniques and structures we can use.  
+\end{enumerate}
+
+\begin{figure}[ht]
+     \centering
+     \begin{subfigure}[b]{0.495\textwidth}
+        \centering
+        \includesvg[width=\textwidth]{img/dtw_warping_path.svg}
+        \caption{}
+        \label{fig:dtw_warping}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.495\textwidth}
+        \centering
+        \includesvg[width=\textwidth]{img/dtw_vs_euclid.svg}
+        \caption{}
+        \label{fig:Euclid_vs_DTW}
+     \end{subfigure}
+    \caption{
+        Fig.~\ref{fig:dtw_warping} displays the optimal warping path between two time series. The darkness of color encodes the distance between the corresponding data points (darker is further away). Fig.~\ref{fig:Euclid_vs_DTW} shows the alignment of data points between two time series using the Euclidian distance and DTW.
+    }
+\end{figure}
+
+The time complexity of this algorithm becomes an issue when operating with long time series and their large amounts. As a solution to the DTW algorithm's time complexity, it is possible to either use lower and upper bounding constraints on the maximal allowed warping path \cite{met:dtw-koegh-rata} or use a temporal constraint on the warping window size \cite{met:dtw-window}. Among the most used are Sakoe-Chiba \cite{met:dtw-window}, Itakura \cite{met:dtw-itakura}, and upper bound to discard complex paths \cite{met:DTW-zheng}. Another option is to use an approximate algorithm proposed by Salvador and Chan \cite{met:FastDTW} called FastDTW, where the warping path is recursively projected and optimized from a lower resolution. This algorithm has linear time complexity. Using the bounding or approximate algorithm comes with faster computational speed and could help with better accuracy due to generalization \cite{met:fDTW}.
+
+DTW is a semi-metric that makes it rather problematic to use with many machine learning algorithms that require a metric space. As there does not exist any complete solution to this issue, there are only partial answers, like Feature DTW from \textcite{met:fDTW}. As we want to use a wide variety of algorithms for visual exploration, we will discuss this in more detail in the following section.
+
+\subsubsection{SpADe, DISSIM, and OSB}
+In 2007, three new distance measures for time series were proposed. The first one is the Spatial Assembling Distance (SpADe), a distance measure used for streaming data that recognizes matching patterns concerning shifting and scaling in temporal and amplitude axes \cite{met:spade}.
+
+For measuring similarity between trajectories with different sampling rates, Frentzos et al. \cite{met:dissim} proposed the DISSIM as an approximation of the integral of Euclidian distance. 
+
+Because data tend to be noisy and include many outliers, Latecki et al. \cite{met:osb} proposed Optimal Subsequence Bijection (OSB) for similarity search. This method automatically finds the most suitable subsequence for a sensible comparison. Its disadvantage is a higher computational cost.
+
+\subsection{Other Distance Measures}
+Except for the shape-based metrics used for time series data, other methods could be used for the distance calculation. These types of measures focus on specific properties shared among time series.
+ 
+\textit{Edit-based} distances were originally designed for string comparison. The idea is to find the minimal number of basic string operations (insertion, deletion, and substitution) by which we can transform one string to another.  The most popular are techniques measuring the similarity by comparing the longest common subsequences (LCSS) \cite{met:LCSS0, met:LCSS1, met:swale}. They are robust to outliers and noise in the data. Similar options are the Edit Distance on Real Sequence (EDR) \cite{met:edr} and Edit Distance with a Real Penalty (ERP) \cite{met:erp}. EDR finds the minimal number of edit operations to convert time series and penalizes unmatched regions' gaps by their lengths. On the other hand, ERP is a combination of DTW and EDR approaches. It uses the Manhattan distance as a penalization for local shifting. Edit-based distances tend to perform well, but generally are outperformed by DTW-like measures \cite{met:dtw-best-0, met:dtw-best-1}. 
+
+\textit{Feature-based} distance measures use features extracted from the original time series, such as correlation \cite{met:coss-col} or coefficients from discrete Fourier transformation and discrete wavelet transformation \cite{met:dft-dwt}. It is possible to use them in specific applications but overly show worse results than other techniques \cite{met:comparison-new}.
+
+\textit{Model-based} measures are an option for very long sequences, but they require prior knowledge of the time series generating process \cite{met:classification}. After choosing and fitting the parametric temporal model on time series, the distance measure is a likelihood that time series came from the same model. Most standard models are using Hidden Markov models or ARMA models \cite{met:hmm}.
+
+\textit{Compression-based} strategies have been succesfully applied in bioinformatics and medical data applications \cite{met:cdm, met:cdm-santos, met:cdm-espoti}. This approach uses the fact that concatenation and compression of similar time series should produce a higher compression ratio than for very diverse ones.
+
+
+Many of these techniques can outperform more common shape-based measures, particularly in specific domains, but lack wide usage and universality of shape-based approaches. Even though we would primarily use the shape-based measure in this thesis, the proposed techniques for time series analysis can use any underlying distance measure.
+
+
+\section{Artificial Feature Space Representation}
+From the previous section, we can presume that shaped-based distance measures, especially Dynamic Time Warping and its derivates, are robust and accurate. The original DTW algorithm's time complexity can be reduced significantly by using bounding or approximation. However, we still need to consider its semi-metric nature because the triangle inequality is required for many machine learning algorithms \cite{cluster:decade-review}. It significantly reduces the number of available algorithms that we could use, primarily as datasets' size increases. Partial answer to this problem is building a feature space representation, which we could consider to be in a metric space.
+
+\subsection{Feature DTW Transformation}
+\textcite{met:fDTW} introduced an idea to build a feature space representation by using DTW. He transforms the original dataset of time series into a new feature space on which it is possible to apply any technique that is used in a metric space.
+
+The transformation works as follows. Having dataset $X$ consisting of time series $(X_1; X_2; ...; X_n)$, we define the Feature DTW transformation as function
+\begin{equation}
+    f_{fDTW}: X \times X \rightarrow M
+\end{equation}
+where $M=(m_{ij}) \in \mathbb{R}_{\ge 0}^{n \times n}$ is a distance matrix with $m_{ij}=DTW(X_i; X_j)$.
+ 
+ In his paper, Kate sees an improved accuracy in classification tasks to widely used techniques using DTW directly. Further, he shows that using DTW with bonding and approximation increases the accuracy probably due to better generalization, and points out that any distance measure could be used instead of DTW. Another notable advantage of using the Feature DTW transformation is that it is possible to combine DTW obtained features with other measures and features. In his work, \textcite{met:fDTW} combined DTW features with Euclidian ones, which led to an additional approvement in terms of accuracy. This technique's main drawback is space complexity as the distance matrix $M$ size is $n^2$ regarding the number of time series. 
+
+
+\subsection{Prototyped Feature DTW Transformation}
+The result of Feature DTW transformation on two similar time series should produce very similar and correlated feature vectors. A statistical point suggests that we are adding very little new information while increasing the number of dimensions in the new feature space. An increase in dimensionality leads to a rise in computational and space requirements, while having multiple significantly correlated features is a problem for many machine learning algorithms. Iwana et al. \cite{met:protofDTW} showed that using only a fraction of the original distance matrix $M$ could obtain comparable or better results than using the whole matrix.
+
+Having the dataset $X=(X_1; X_2; ...; X_n)$ and a set of time series $P=(P_1; P_2; ...; P_m)$ such $P \subseteq X$ called prototypes, we define the transformation as function
+\begin{equation}
+    f_{Iwana-fDTW}: X \times X \rightarrow K
+\end{equation}
+where $K=(k_{ij}) \in \mathbb{R}_{\ge 0}^{n \times m}$ is a distance matrix with $k_{ij}=DTW(X_i; P_j)$.
+
+As this method strongly depends on prototypes, their selection is crucial for the method's success. They proposed a supervised technique using the \textit{AdaBoost} algorithm and weak learners on one feature at a time. Using this technique, they were able to use a smaller number of components while increasing the classification accuracy. Because this method is available only for supervised problems, they briefly discussed multiple statistical strategies to chose possible prototypes.
+
+All of the approaches in their work require prior computation of the whole distance matrix, which is problematic for larger datasets. In this thesis, we will propose methods that do not require a full distance matrix in advance but rather compute it interactively.
+
+\section{Chapter Summary}
+
+In this chapter, we discussed distance measures for time series. Among them, shaped-based distances, particularly the Euclidian distance and Dynamic Time Warping (DTW) seem like the most promising ones. The main drawback of DTW is its semi-metric nature. To use the advantages of DTW in a metric space, we can use Feature DTW transformation to create a feature space representation of DTW. This representation then forms the input for other machine learning algorithms and can be combined with other distance measures and feature extraction algorithms.
