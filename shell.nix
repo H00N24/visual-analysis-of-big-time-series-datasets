@@ -5,7 +5,10 @@ with import sources.nixpkgs {};
 mkShell {
   name = "vaobtsd-env";
   buildInputs = [
-    python36
+    python38
+    python38Packages.wheel
+    python38Packages.poetry
+    clang_10
     gcc
     nodejs-12_x
     glibcLocales
