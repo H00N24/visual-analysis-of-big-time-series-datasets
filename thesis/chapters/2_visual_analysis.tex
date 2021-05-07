@@ -1,7 +1,7 @@
 \chapter{Visual Exploration of Time Series Datasets}
 In data science, it is very rare to get a well-defined and detailed problem description. A much more common task is to analyze the data and to detect interesting patterns, outliers, or other phenomena that are fulfilling a complex set of criteria, which results in multiple processing steps. As we cannot comprehensively represent all necessary information only by numbers, we use data visualization. 
 
-This chapter looks at methods to comprehensibly and effectively visualize a time series dataset to study it in detail and how to plot time series once we want to look at them in detail. Then it goes thru the clustering and anomaly detection methods available for large datasets.
+This chapter looks at methods to comprehensibly and effectively visualize a time series dataset to study it in detail and how to plot time series once we want to look at them in detail.
 
 \section{Dimensionality Reduction}
 Usual datasets we encounter in computer science have tens or hundreds of dimensions, far beyond our imagination's capabilities. It makes it unintuitive for us to examine the dataset while also increases computational requirements for its analysis and visualization. For a visual exploration of the dataset, it is necessary to project our data into a lower-dimensional space. In this section, we will focus on the dimensionality reduction techniques, that are specifically used in data visualization.
@@ -38,7 +38,7 @@ t-SNE or \textit{t-Distributed Stochastic Neighbor Embedding} \cite{vis:tsne} is
         \label{fig:tsne}
     \end{subfigure}
     
-    \caption{Comparison of PCA (\ref{fig:pca-emb}) and t-SNE (\ref{fig:tsne}) applied to the S-shape dataset (\ref{fig:s-shape-sub}), commonly used for benchmarking the dimensionality reduction techniques.}
+    \caption{Comparison of PCA (b) and t-SNE (c) applied to the S-shape dataset (a), commonly used for benchmarking the dimensionality reduction techniques.}
     \label{fig:s-shape}
 \end{figure}
 
@@ -89,7 +89,7 @@ Despite their visualization qualities, both t-SNE and UMAP neglect information a
         \label{fig:fas-densmap}
     \end{subfigure}
     \captionsetup{font={footnotesize}}
-    \caption{Comparison of PCA (\ref{fig:fas-pca}), UMAP (\ref{fig:fas-umap}), and densMAP (\ref{fig:fas-densmap}) on the Fashion MNIST dataset \cite{vis:fashion-mnist}.}
+    \caption{Comparison of PCA (a), UMAP (b), and densMAP (c) on the Fashion MNIST dataset \cite{vis:fashion-mnist}.}
     \label{fig:fashion}
 \end{figure}
 
@@ -113,7 +113,7 @@ Because of this issue, Steinarsson proposed the Largest Triangle downsampling al
 \begin{figure}[htp]
     \centering
     \includesvg[width=\textwidth]{img/effective-area.svg}
-    \caption{Effective area when $X_a$, $X_b$, and $X_c$ are directly successive data points (there are no data points between them). The color of the effective area corresponds to the color of a data point.}
+    \caption{Effective area when $X_a$, $X_b$, and $X_c$ are directly successive data points (there are no data points between them). The color of the effective area corresponds to the color of a data point, first and last datapoints are different as they are part of the downsampled result.}
     \label{fig:effective-area}
 \end{figure}
 
@@ -158,139 +158,11 @@ All of the approaches mentioned so far transform time series into a representati
     \label{fig:my_label}
 \end{figure}
 
-The \textit{Datashader} renderer \cite{vis:datashader} is a complete graphical pipeline that breaks plotting into multiple computations on intermediate representations.
+The \textit{Datashader} renderer \cite{vis:datashader} is a complete graphical pipeline from the original data to final graph. It breaks plotting into multiple computations on intermediate representations.
 That allows multiple fast and efficient aggregations, such as value counts and averaging. Then Datashader renders the results to the final image's pixels as color saturations. The resulting representation is a raster image that accurately represents the aggregated information. Accuracy is limited only by the resolution of the final image and, due to its effectiveness, it can process millions of data points in a reasonable time. As the raster image loses detail as we zoom in, this method gives us an excellent overview of the whole time series (or dataset), but if we want to explore details, we need to repeat the processing pipeline all over again.
 
-\section{Clustering}
-Another part of our work is to determine the clusters among our data. Because we are using the Feature DTW transformation, we are not limited to clustering specific only for time series, but we can use a wide variety of clustering algorithms used for spatial data. Due to the size of our dataset, we will list only algorithms that are scalable to a large number of samples and features.
-
-We will separate the clustering algorithms into three categories:
-\begin{enumerate}
-    \item Distance-based
-    \item Methods using the nearest-neighbor graph
-    \item Density-based
-\end{enumerate}
-
-\subsection{Distance-based Methods}
-Distance-based methods are directly using the distance between the data points to determine their affiliations to the clusters. The two main representatives of this category, that scale well  with dataset's size, are \textit{K-means} and \textit{Agglomerative Hierarchical Clustering} methods.
-
-\subsubsection{K-means}
-The \textit{k-means} \cite{vis:kmeans} is a simple clustering algorithm that separates the data into $n$ clusters, minimizing the within-cluster sum of squares. It produces convex and isotropic clusters, and it is easily scalable to large datasets. The disadvantages of this method are that we have to define the number of clusters in advance, and in some cases, the clusters in data are neither convex nor isotropic. Never the less it is a solid starting point for any cluster analysis. 
-
-\subsubsection{Agglomerative Hierarchical Clustering}
-The \textit{Agglomerative Hierarchical Clustering} \cite{vis:agg-cluster, vis:kmeans} uses a bottom-up strategy to join the two most similar data points or clusters into a single bigger one. The primary representation is a tree-like structure where leaves are single data points, nodes represent clusters, and the root is a single unified cluster. The algorithm selects two closest nodes based on the merge strategy in each iteration and joins them into a single one until the chosen number of clusters is met.
-
-There are four main merge strategies called \textit{linkages}:
-\begin{enumerate}
-    \item \textit{Single linkage} -- the minimal distance among all tuples of data points from two clusters.
-    \item \textit{Complete linkage} -- the maximal distance among all tuples of data points from two clusters.
-    \item \textit{Average linkage} -- the average distance between all pairs of data points from two clusters.
-    \item \textit{Ward linkage} -- minimization of the within-cluster sum of squares similar to the K-means.
-\end{enumerate}
-This clustering method is scalable with the increasing number of samples and, based on the linkage type, provides different cluster types. The \textit{ward linkage} produces the most even-sized clusters among the merging strategies but is usable only with Euclidian metrics while also having a much higher time complexity. If we want to use non-Euclidian metrics, the \textit{average linkage} is a feasible alternative. Both \textit{single linakge} and \textit{complete linkage} are very efficient and scale well on large datasets. The drawback is that they are fragile to noise in the data as they are using only the distance between two points from clusters.
-
-\subsection{Methods Using the Nearest Neighbor Graph}
-Another family of clustering algorithms is using the pre-constructed affiliation graph from data points. Usually, it uses the nearest neighbor graph. The two main representatives are the Affinity Propagation and Spectral clustering. 
-\subsubsection{Affinity Propagation}
-The \textit{Affinity Propagation} \cite{vis:affini} sends messages between data points in the affiliation graph to determine cluster centers and the number of clusters.  The disadvantage is that it is usable only on smaller datasets because of quadratic time complexity, making it unusable on our dataset.
-
-\subsubsection{Spectral Clustering}
-The \textit{Spectral Clustering} \cite{vis:spectral} starts with the nearest neighbor graph represented as a similarity matrix where every row represents a data point and its graph distance to the other points. After selecting the number of clusters $n$, it computes the optimal graph cuts to create a connected component for every cluster. The drawback of spectral clustering is that it can be efficiently computed only for a small number of clusters.
-
-\subsection{Density-based Methods}
-The last group of clustering algorithms, \textit{density-based} methods, uses the difference between dense and sparse regions to determine the optimal clustering. 
-The main challenge of these methods is to determine the correct density estimate of the dataset, which is problematic for high-dimensional datasets. As the number of dimensions increases, the volume of the space rises exponentially, thus making the dataset quickly sparse. This phenomenon is also known as the \textit{Curse of Dimensionality} \cite{exp:curse-of-dim}.
-
-Due to the size of our dataset and usage of Feature DTW transformation, we expect quite high-dimensional data. Therefore we are not considering the most common dimensionality techniques such as \textit{Gaussian Mixture Models} \cite{vis:gauss-mixt} and \textit{Mean Shift} \cite{vis:mean-shift}, as they make assumptions about the underlying data distribution, and can not cope with high dimensional data well enough.
-
-\subsubsection{DBSCAN}
-The first density-based clustering algorithm in our work is the \textit{Density-based spatial clustering of applications with noise (DBSCAN)} \cite{vis:dbscan}. This algorithm separates the dataset into dense clusters divided by sparse regions and outlying data points, considered as noise. Firstly it separates data points into three groups: core points, non-core points close to the core points, and noise.
-
-We say that a point is a core point if and only if in his surrounding area with radius $\epsilon$ are at least $X$ other data points (the minimal number of data poitns). The non-core points close to the core points have a core point within the radius $\epsilon$, yet they do not meet the minimal data points requirement within $\epsilon$. Noise points do not have any core points in their surrounding area. Hence, the \textit{DBSCAN} algorithm automatically detects the number of clusters and only requires the radius $\epsilon$ and the minimal number of samples $X$. The disadvantage of \textit{DBSCAN} is that it can not detect clusters with a very different density as the radius is same for every point.
-
-\subsubsection{OPTICS}
-\textit{The Ordering points to identify the clustering structure (OPTICS)} \cite{vis:optics} is a partial solution for \textit{DBSCAN}'s problem with clustering regions with different densities. \textit{OPTICS} uses the minimal number of neighbors $X$, and instead of a single radius like in \textit{DBSCAN}, it uses the maximal radius to consider $\epsilon$. For each point it computes the core distance, the minimal radius in which is the point considered as a core point, and reachability distance to every other point, which is either the core distance of the other point or the distance between them, whichever is bigger. If two neighbor points have a reachability distance smaller than the core distance, we consider them to be a part of the same cluster.
-
-Because \textit{OPTICS} computes both core distance and reachability, it has a much higher computational cost than \textit{DBSCAN}. With the usage of spatial indexing trees, we could avoid a costly computation of the full distance matrix, making it applicable to larger datasets.
-
-\subsubsection{HDBSCAN}
-The \textit{Hierarchical Density-based Spatial Clustering of Applications with Noise (HDBSCAN)} \cite{vis:hdbscan} is another clustering algorithm originating in the \textit{DBSCAN}. Like \textit{DBSCAN} and \textit{OPTICS}, it starts by computing the core distance of every point, which is a minimum radius in which there are at least $X$ data points (minimal number of data points) and the mutual reachability distance for every pair of data points -- the largest value among their core distances and their mutual distance.
-\begin{figure}[ht]
-     \centering
-     \begin{subfigure}[b]{0.495\textwidth}
-        \centering
-        \includesvg[width=\textwidth]{img/hdbscan_dataset.svg}
-        \caption{}
-        \label{fig:hdbscan_dataset}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.495\textwidth}
-        \centering
-        \includesvg[width=\textwidth]{img/hdbscan_tree.svg}
-        \caption{}
-        \label{fig:hdbscan_tree}
-     \end{subfigure}
-    \caption{The minimal spanning tree from \textit{HDBSCAN} (\ref{fig:hdbscan_tree}) using the mutual reachability distance on an artificially generated dataset (\ref{fig:hdbscan_dataset}).
-    }
-\end{figure}
-
-Afterward, it finds the minimal spanning tree of a weighted graph where data points are vertices, and edges between them have the weight of their mutual reachability distance (Fig.~\ref{fig:hdbscan_tree}).
-
-The next step clusters the tree vertices by single-linkage hierarchical clustering using the edge weights. In Fig.~\ref{fig:hdbscan_hier}, we can see the dendrogram visualizing such clustering where on the $y$ axis we can see the \textit{mutual reachability distance} at which the nodes merge.
-The next step converts the tree into a hierarchy of connected components by sorting the edges and merging them in ascending order (Fig.~\ref{fig:hdbscan_hier}). 
-\begin{figure}[ht]
-     \centering
-     \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includesvg[width=\textwidth]{img/hdbscan_hier.svg}
-        \caption{}
-        \label{fig:hdbscan_hier}
-     \end{subfigure}
-     \hfill
-     \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includesvg[width=\textwidth]{img/hdbscan_cons.svg}
-        \caption{}
-        \label{fig:hdbscan_cons}
-     \end{subfigure}
-    \caption{\textit{HDBSCAN}'s single linkage hierarchy of connected components (\ref{fig:hdbscan_hier}) and the most stable clusters in the tree and compressed (\ref{fig:hdbscan_cons}).
-    }
-\end{figure}
-To determine the number of clusters in the data, \textit{DBSCAN} computes the stability of every cluster. As a measure, we are using the $\lambda$, which is reversed \textit{mutual reachability distance} ($\lambda = \frac{1}{distance}$). For every cluster, \textit{HDBSCAN} defines the distance when it is created $\lambda_c$ and the distance when it splits into multiple clusters $\lambda_d$. Then for every point $p$ in the cluster, it computes the value $\lambda_p$, which is the value when the point leaves the cluster either by cluster split ($\lambda_d$) or complete separation. The stability of a cluster $C$ is then defined as:
-\begin{equation}
-    \sum_{p \in C}(\lambda_p - \lambda_c)
-\end{equation}
-Finally, it travels through the tree, starting from the leaves going up to the root node. For every node (cluster), if its stability is greater than the sum of its children's stabilities, \textit{HDBSCAN} marks the cluster as a real cluster and demarks all of its descendants. Once the algorithm reaches the root node, it stops and returns all marked clusters as final data clustering (Fig.~\ref{fig:hdbscan_cons}).
-
-Even though \textit{HDBSCAN} consists of multiple computational steps, there are highly optimized implementations \cite{vis:hdbscan-imp} allowing \textit{HDBSCAN} to be effectively used on large datasets.
-
-\section{Anomaly Detection}
-In the last part of our analysis, we want to detect and study the anomalous data points within a dataset. We will focus on two methods \textit{Isolation Forest} and \textit{Lightweight On-line Detector of Anomalies} which are widely used and efficient on large high-dimensional datasets with.
-
-\subsection{Isolation Forest}
-One of the widely used anomaly detection algorithms for large datasets is the \textit{Isolation Forest} \cite{vis:isoforest}. The central concept of \textit{Isolation Forest} is that anomalous data points can be isolated faster than the rest of the dataset. 
-
-To find the anomalies, it constructs the forest of binary isolation trees. A binary isolation tree is a simple decision tree with restricted depth where every node of the tree selects the random feature and random value in its range as a separator. The anomaly score of a data point is the average depth it reached in trees in the isolation forest.
-
-Because of its simple nature, the \textit{Isolation Forest} scales very well with the number of samples and number of features while also achieving competitive results.
-
-\subsection{Lightweight On-line Detector of Anomalies}
-The \textit{Lightweight On-line Detector of Anomalies (LODA)} is an anomaly detection method designed to process huge high-dimension real-time data streams. \textit{LODA} uses a combination of randomly generated sparse projections and histograms to determine the anomaly score of every data point.
-
-In the first step, \textit{LODA} generates $X$ random projections vectors with only $\sqrt{d}$ non-zero taken from $N(0, 1)$ values where $d$ is input data's dimensionality. Then, it constructs a histogram on every projection vector. The final anomaly score of every point is the negative average logarithm of probability throughout all histograms.
-
-Because \textit{LODA} is using sparse projections and histograms as very simple density estimators, it has very fast training and execution time. Another advantage is that thru the vectors' sparsity, it is possible to discover which feature contributed most to the data points anomaly score. We compute the \textit{one-tailed two-sample t-test} between probabilities from histograms on projections with and without a specific feature for every feature. The higher the value of the \textit{t-test}, the stronger is the feature significance.
 
 \section{Chapter Summary}
 In this chapter, we showed several dimensionality reduction techniques used for visualization. Generally, it is advisable to start with the PCA to capture the global data structure and then combine it with either t-SNE, UMAP, or densMAP to examine the details. In our case, we will primarily use UMAP and densMAP as they have several advantages over the t-SNE.
 
 For time series plotting, we can use the LTTB downsampling algorithm if we want a smaller representation for visualization or use the Datashader renderer to render the original data accurately.
-
-There are several options for clustering of large datasets:
-\begin{itemize}
-    \item \textit{K-means} if we know the number of clusters and want evenly sized convex clusters. It is a good starting technique as it scales very well.
-    \item \textit{Hierarchical agglomerative clustering} is suitable on medium to large datasets based on the chosen linkage. \textit{Ward linkage} produces the most evenly sized clusters but has the highest complexity and is defined only in the euclidian space. For non-euclidian cases, the \textit{average linkage} is a good alternative. While the \textit{single linkage} is very efficient and can be used on large datasets, with the capability to produce non-convex clusters, it is fragile to the noise in the data.
-    \item \textit{OPTICS} and \textit{HDBSCAN} for cases when we do not know the number of clusters in our data but want to specify only the minimal number of clusters. As these methods are density-based, we have to be aware of the \textit{curse of dimensionality} consider transformation the dataset into a lower-dimensional representation.
-\end{itemize}
-
-In the field of anomaly detection, we recommend the \textit{Isolation Forest} and \textit{LODA}. Both methods are ensembles of simple estimators, giving them high-speed performance regardless of the dataset's size. \textit{LODA} also provides the capability for scoring the features based on their significance in anomaly score.

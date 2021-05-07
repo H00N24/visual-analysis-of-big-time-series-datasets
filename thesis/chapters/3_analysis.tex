@@ -57,8 +57,8 @@ In summary, we are describing our original time series with eight new time serie
 \section{Interactive Feature Space Building}
 Once we use seasonalities and trends, our dataset changes from univariate time series into a multi-model time series of eight time series of different lengths. In combination with a lack of knowledge about the customer, we have a large unsupervised multi-model dataset. We will split our solution into two parts: multi-model data and dataset size.
 
-\subsection{Multi-Model Prototyped Feature DTW Transformations}
-We propose the Multi-model Prototyped Feature DTW transformations (MPFDTW) to work with the multi-model model time series dataset. As Kate has shown, it is possible combining multiple Feature DTW transformations (FDTW) \cite{met:fDTW}. Similarly to his approach, the MPFDTW is a union of FDTW transformation for every component (model) of our multi-model time series. Having a dataset $S = {T_0, T_1, \dots, T_n}$ of multi-model time series $T_n = (a_{n0}, a_{n1}, \dots, a_{nj})$ where $a_nj$ are time series of arbitrary length and $A_j = (a_{0j}, a_{1j}, \dots, a_{nj})$ are tuples of time series from one model (dimension), we define the MPFDTW transformation as:
+\subsection{Multi-Model Prototyped Feature DTW Transformation}
+We propose the Multi-model Prototyped Feature DTW transformation (MPFDTW) to work with the multi-model model time series dataset. As Kate has shown, it is possible combining multiple Feature DTW transformations (FDTW) \cite{met:fDTW}. Similarly to his approach, the MPFDTW is a union of FDTW transformation for every component (model) of our multi-model time series. Having a dataset $S = {T_0, T_1, \dots, T_n}$ of multi-model time series $T_n = (a_{n0}, a_{n1}, \dots, a_{nj})$ where $a_nj$ are time series of arbitrary length and $A_j = (a_{0j}, a_{1j}, \dots, a_{nj})$ are tuples of time series from one model (dimension), we define the MPFDTW transformation as:
 \begin{equation}
  MPFDTW(S) = ( FDTW(A_{0}) | FDTW(A_{1}) | \dots | FDTW(A_{j}) )
 \end{equation}
@@ -90,11 +90,12 @@ Because after the MPFDTW transformation, the transformed feature matrix has the 
 \subsubsection{Selection by Predicted Correlation}
 As two strongly correlated feature vectors do not give much information, the last strategy we propose comes from an assumption that we could predict the correlation of feature vectors from other time series from information about current prototypes. 
 
-We start with the random prototype selection and transform the dataset into a feature matrix. Then we use Spearman's rank correlation coefficient and compute the correlation matrix between the feature vectors produced from our prototypes. Afterwards, we use the feature matrix and correlation coefficient of other prototypes to train a regressor to predict the correlation on other time series for each prototype. Finally, we select the prototypes with the lowest average predicted correlation (Appendix~\ref{sec:app-corr}).
+We start with the random prototype selection and transform the dataset into a feature matrix. Then we use Spearman's rank correlation coefficient and compute the correlation matrix between the feature vectors produced from our prototypes. Afterwards, we use the feature matrix and correlation coefficient of other prototypes to train a regressor to predict the correlation on other time series for each prototype. Finally, we select the prototypes with the lowest average predicted correlation.
 
+Unfortunately, this method did not prove significantly better during our tests on the UCR datasets than the randomized selection of similar size (Appendix~\ref{sec:app-corr}). The prediction of the correlation of new prototypes was reasonably accurate, but it seems that the correlation was not the most reliable predictor of prototype quality. We think that there is an opportunity for another research in this matter.
 
 \subsection{Interactive Feature Space Building}
-Considering the techniques used for prototype selection, we split our feature space building process into an interactive iterative pipeline. The pipeline consists of seven steps:
+Considering the techniques used for prototype selection, we split our feature space building process into an interactive iterative pipeline. The pipeline consists of six steps:
 \begin{enumerate}
     \item Select a subsample of the dataset.
     \item Build a Prototyped Feature DTW space.
@@ -106,7 +107,7 @@ Considering the techniques used for prototype selection, we split our feature sp
 
 Because our dataset consists of a large number of multi-model time series, we will randomly select a fraction of our dataset in the first step. This allows us to work with the data in real-time. We are using the subsample only for the initial iterative feature space building. These steps require human input, and very like we have to them several times before we are satisfied with the result.
 
-In the second step, we are building the new feature space by using MDFDTW. As we have no information at the start, in the first iteration, we are using the randomly selected subsample as the initial selection of prototypes. Based on our test on the UCR datasets, a random prototype selection seems to be a very efficient approach that still produces comparable results in terms of classification accuracy (Appendix ~\ref{sec:appendix}). After the first iteration, the feature space building is fully automatic based on the prototypes selected or removed in step three. As we are using the iterative approach, we do not compute already computed feature vectors, increasing the efficiency.
+In the second step, we are building the new feature space by using MDFDTW. In the first iteration, we are using the randomly selection of prototypes. After the first iteration, the feature space building is fully automatic based on the prototypes selected or removed in next step. As we are using the iterative approach, we do not compute already computed feature vectors, increasing the efficiency.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=0.9\textwidth]{img/prototypes.png}
@@ -156,6 +157,4 @@ As we want our work to be fully replicable, we are using the \textit{Nix} packag
 We were using only open-source packages in our work, and all of our source codes, including all notebooks from experiments, are available at our Github repository \footnote{\url{https://github.com/H00N24/visual-analysis-of-big-time-series-datasets}}.
 
 \section{Results}
-
-\section{Chapter Summary}
-In this chapter we proposed a 
+In our analysis, we prepared a complete processing pipeline for the large dataset of power consumption curves, starting from feature extraction and ending with data visualization, clustering, and anomaly detection.
