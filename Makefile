@@ -28,8 +28,9 @@ mypy:
 
 requirements:
 	@echo "# Please seat back and relax, this may take some time. :)"
-	pip-compile $(PIP_COMPILE_FLAGS) -o requirements.txt setup.py
-	pip-compile $(PIP_COMPILE_FLAGS) -o requirements-dev.txt requirements-dev.in
+	poetry update
+	poetry export -f requirements.txt -o requirements.txt
+	poetry export --dev -f requirements.txt -o requirements-dev.txt
 
 cython-fastdtw:
 	cd libs/fastdtw && \

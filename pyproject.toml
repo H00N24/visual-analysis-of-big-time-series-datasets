@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "feature-dtw"
+version = "0.0.0"
+description = "Feature DTW Transformation"
+authors = ["Ondrej Kurák <ondrej.kurak.h@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+scikit-learn = "^0.24.2"
+tslearn = "^0.5.0"
+numpy = "^1.20.2"
+fastdtw = "^0.3.4"
+
+[tool.poetry.dev-dependencies]
+black = "^21.5b0"
+flake8 = "^3.9.1"
+mypy = "^0.812"
+isort = "^5.8.0"
+umap-learn = "^0.5.1"
+hdbscan = "^0.8.27"
+pystan = "^2.19"
+fbprophet = "^0.7.1"
+holidays = "^0.11.1"
+lttb = "^0.3.1"
+ipykernel = "^5.5.3"
+jupyter = "^1.0.0"
+jupyterlab = "^3.0.14"
+nbdime = "^3.0.0"
+tqdm = "^4.60.0"
+bokeh = "^2.3.1"
+datashader = "^0.12.1"
+matplotlib = "^3.4.1"
+jupyterlab-execute-time = "^2.0.2"
+jupyter-bokeh = "^3.0.0"
+jupyter-contrib-nbextensions = "^0.5.1"
+jupyterlab-code-formatter = "^1.4.10"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
