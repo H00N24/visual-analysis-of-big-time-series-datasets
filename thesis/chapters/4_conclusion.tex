@@ -1,0 +1,10 @@
+\chapter{Conclusion and Future Work}
+The aim of this thesis was to perform an exhaustive literature search and present the overview of the existing techniques used for visual analysis of large datasets of long time series. We applied these methods in the analysis of power consumption curves and proposed a novel approach for transforming datasets of time series into feature space representation.
+
+In the first part, we discussed distance measures used for time series, including their advantages and disadvantages, the Feature DTW transformation, and methods utilized for clustering and anomaly detection on large datasets.
+
+The second part focused on methods used for visual exploration of time series and datasets. We listed several methods for dimensionality reduction that are specifically useful for finding visually meaningful low-dimensional representations of datasets and algorithms for downsampling time series that maintain their visual properties.
+
+The third part, and the main contribution of this thesis, is a proposed novel method Multi-Component Feature DTW (MCFDTW) transformation, and the strategies for prototype selection. MCFDTW efficiently transforms large datasets of multi-component time series into a meaningful smaller feature space representation used in analysis pipelines. To demonstrate the usefulness of our approach, we analyzed the power consumption dataset resulting in multiple views of the dataset revealing the local and global structures within. Then we found clusters in our data with similar seasonalities and trends and also anomalous data points.
+
+From the perspective of future work, we see an opportunity for possible research in converting the manual selection of prototypes to the automatic one for Prototyped Feature DTW and MCFDTW transformations. We tried multiple strategies based on the automatic selection by predicting the correlation of new prototypes or using the data density. None of our strategies provided significantly better results than the same amount of randomly selected prototypes, yet we still believe there is a strategy that will yield superior results.

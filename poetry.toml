@@ -1,0 +1,5 @@
+[virtualenvs]
+in-project = true
+
+[repositories.gitlab]
+url = "https://gitlab.gaussalgo.com/api/v4/projects/1070/packages/pypi"
