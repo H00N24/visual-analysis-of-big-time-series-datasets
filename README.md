@@ -204,6 +204,18 @@ https://doi.org/10.1016/j.patcog.2016.11.013.
 
 The complete bibliography of my master's thesis is listed in `thesis/bib/`.
 
+## BibTeX
+```
+@MastersThesis{Kurákthesis,
+    AUTHOR = "KURÁK, Ondrej",
+    TITLE = "Visual Analysis of Big Time Series Datasets [online]",
+    YEAR = " [cit. 2021-05-17]",
+    TYPE = "Master's thesis",
+    SCHOOL = "Masaryk University, Faculty of Informatics, Brno",
+    SUPERVISOR = "Barbora Kozlíková",
+    URL = "Available from WWW <https://is.muni.cz/th/zd4lj/>",
+}
+```
 
 [Nix]: https://nixos.org/
 [Poetry]: https://python-poetry.org/
